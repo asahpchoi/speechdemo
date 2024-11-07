@@ -106,20 +106,79 @@ export function InsuranceFormWithSpeech() {
         }
       }
     } else {
-      if (transcript.includes("名")) {
-        const match = transcript.match(/名前は(.+)/);
-        if (match) setFormData((prev) => ({ ...prev, firstName: match[1] }));
-      }
-      if (transcript.includes("住所")) {
-        const match = transcript.match(/住所は(.+)/);
-        if (match) setFormData((prev) => ({ ...prev, address: match[1] }));
-      }
-      if (transcript.includes("電話番号")) {
-        const match = transcript.match(/電話番号は(.+)/);
-        if (match) {
-          const phoneNumber = match[1].replace(/[^\d-]/g, "");
-          setFormData((prev) => ({ ...prev, phoneNumber }));
+      const nameMatch = transcript.match(/名前は(.+)/);
+      if (nameMatch) {
+        const fullName = nameMatch[1].trim().split(/\s+/);
+        if (fullName.length >= 2) {
+          setFormData((prev) => ({
+            ...prev,
+            lastName: fullName[0],
+            firstName: fullName.slice(1).join(" "),
+          }));
         }
+      }
+
+      // Name in Kana
+      const kanaMatch = transcript.match(/カナは(.+)/);
+      if (kanaMatch) {
+        const fullKana = kanaMatch[1].replace(/\s+/g, "");
+        setFormData((prev) => ({
+          ...prev,
+          lastNameKana: fullKana.slice(0, fullKana.length / 2),
+          firstNameKana: fullKana.slice(fullKana.length / 2),
+        }));
+      }
+
+      // Gender
+      if (transcript.includes("性別は男性")) {
+        setFormData((prev) => ({ ...prev, gender: "male" }));
+      } else if (transcript.includes("性別は女性")) {
+        setFormData((prev) => ({ ...prev, gender: "female" }));
+      }
+
+      // Postal Code
+      const postalMatch = transcript.match(/郵便番号は(\d{3}[-\s]?\d{4})/);
+      if (postalMatch) {
+        setFormData((prev) => ({
+          ...prev,
+          postalCode: postalMatch[1].replace(/[-\s]/g, ""),
+        }));
+      }
+
+      // Address
+      const addressMatch = transcript.match(/住所は(.+)/);
+      if (addressMatch) {
+        setFormData((prev) => ({ ...prev, address: addressMatch[1] }));
+      }
+
+      // Phone Number
+      const phoneMatch = transcript.match(/電話番号は([\d-]+)/);
+      if (phoneMatch) {
+        setFormData((prev) => ({ ...prev, phoneNumber: phoneMatch[1] }));
+      }
+
+      // Occupation
+      if (transcript.includes("職業は会社員")) {
+        setFormData((prev) => ({ ...prev, occupation: "employee" }));
+      } else if (transcript.includes("職業は自営業")) {
+        setFormData((prev) => ({ ...prev, occupation: "self-employed" }));
+      } else if (transcript.includes("職業はその他")) {
+        setFormData((prev) => ({ ...prev, occupation: "other" }));
+      }
+
+      // Birth Date
+      const birthMatch = transcript.match(
+        /(平成|昭和|令和)(\d+)年(\d+)月(\d+)日/,
+      );
+      if (birthMatch) {
+        const [, era, year, month, day] = birthMatch;
+        setFormData((prev) => ({
+          ...prev,
+          birthYear: year.padStart(2, "0"),
+          birthMonth: month.padStart(2, "0"),
+          birthDay: day.padStart(2, "0"),
+        }));
+        // You might want to add logic here to convert the Japanese era year to the Gregorian calendar year
       }
     }
   };
