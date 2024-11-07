@@ -90,15 +90,10 @@ export function InsuranceFormWithSpeech() {
   const processTranscript = (transcript: string) => {
     // Simple logic to fill form fields based on speech input
     if (isEnglish) {
-      if (transcript.toLowerCase().includes("name")) {
-        const match = transcript.toLowerCase().match(/name\sis(.+)/);
+      if (transcript.toLocaleLowerCase().includes("name")) {
+        const match = transcript.toLocaleLowerCase().match(/name(.+)/);
         if (match) setFormData((prev) => ({ ...prev, lastName: match[1] }));
       }
-      if (transcript.includes("名")) {
-        const match = transcript.match(/名前は(.+)/);
-        if (match) setFormData((prev) => ({ ...prev, firstName: match[1] }));
-      }
-
       if (transcript.toLowerCase().includes("address")) {
         const match = transcript.toLowerCase().match(/address\sis(.+)/);
         if (match) setFormData((prev) => ({ ...prev, address: match[1] }));
@@ -111,24 +106,9 @@ export function InsuranceFormWithSpeech() {
         }
       }
     } else {
-      if (transcript.includes("name")) {
-        const match = transcript.match(/name(.+)/);
-        if (match) setFormData((prev) => ({ ...prev, lastName: match[1] }));
-      }
       if (transcript.includes("名")) {
         const match = transcript.match(/名前は(.+)/);
         if (match) setFormData((prev) => ({ ...prev, firstName: match[1] }));
-      }
-      if (transcript.includes("カナ")) {
-        const match = transcript.match(/カナは(.+)/);
-        if (match) {
-          const kana = match[1].replace(/\s+/g, "");
-          setFormData((prev) => ({
-            ...prev,
-            lastNameKana: kana.slice(0, kana.length / 2),
-            firstNameKana: kana.slice(kana.length / 2),
-          }));
-        }
       }
       if (transcript.includes("住所")) {
         const match = transcript.match(/住所は(.+)/);
@@ -172,13 +152,7 @@ export function InsuranceFormWithSpeech() {
             <form className="space-y-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold">申込書情報入力</h2>
-                <Checkbox
-                  onClick={() => {
-                    setIsEnglish(!isEnglish);
-                    console.log(isEnglish);
-                  }}
-                ></Checkbox>
-                English
+
                 <Button
                   type="button"
                   onClick={toggleListening}
@@ -439,6 +413,13 @@ export function InsuranceFormWithSpeech() {
                   モバイル・ペーパーレス手続きへ
                 </Button>
                 <div className="space-x-2">
+                  English
+                  <Checkbox
+                    onClick={() => {
+                      setIsEnglish(!isEnglish);
+                      console.log(isEnglish);
+                    }}
+                  ></Checkbox>
                   <Button variant="outline">キャンセル</Button>
                   <Button className="bg-orange-500 hover:bg-orange-600">
                     保存
