@@ -34,6 +34,7 @@ interface FormData {
 export function InsuranceFormWithSpeech() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
+  const [isEnglish, setIsEnglish] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     lastName: "",
     firstName: "",
@@ -58,7 +59,7 @@ export function InsuranceFormWithSpeech() {
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = "ja-JP";
+      recognitionRef.current.lang = isEnglish ? "en-US" : "ja-JP";
 
       recognitionRef.current.onresult = (event: any) => {
         const current = event.resultIndex;
@@ -75,7 +76,7 @@ export function InsuranceFormWithSpeech() {
     } else {
       console.error("Speech recognition not supported");
     }
-  }, []);
+  }, [isEnglish]);
 
   const toggleListening = () => {
     if (isListening) {
@@ -88,34 +89,57 @@ export function InsuranceFormWithSpeech() {
 
   const processTranscript = (transcript: string) => {
     // Simple logic to fill form fields based on speech input
-    if (transcript.includes("name")) {
-      const match = transcript.match(/name(.+)/);
-      if (match) setFormData((prev) => ({ ...prev, lastName: match[1] }));
-    }
-    if (transcript.includes("名")) {
-      const match = transcript.match(/名前は(.+)/);
-      if (match) setFormData((prev) => ({ ...prev, firstName: match[1] }));
-    }
-    if (transcript.includes("カナ")) {
-      const match = transcript.match(/カナは(.+)/);
-      if (match) {
-        const kana = match[1].replace(/\s+/g, "");
-        setFormData((prev) => ({
-          ...prev,
-          lastNameKana: kana.slice(0, kana.length / 2),
-          firstNameKana: kana.slice(kana.length / 2),
-        }));
+    if (isEnglish) {
+      if (transcript.toLowerCase().includes("name")) {
+        const match = transcript.toLowerCase().match(/name\sis(.+)/);
+        if (match) setFormData((prev) => ({ ...prev, lastName: match[1] }));
       }
-    }
-    if (transcript.includes("住所")) {
-      const match = transcript.match(/住所は(.+)/);
-      if (match) setFormData((prev) => ({ ...prev, address: match[1] }));
-    }
-    if (transcript.includes("電話番号")) {
-      const match = transcript.match(/電話番号は(.+)/);
-      if (match) {
-        const phoneNumber = match[1].replace(/[^\d-]/g, "");
-        setFormData((prev) => ({ ...prev, phoneNumber }));
+      if (transcript.includes("名")) {
+        const match = transcript.match(/名前は(.+)/);
+        if (match) setFormData((prev) => ({ ...prev, firstName: match[1] }));
+      }
+
+      if (transcript.toLowerCase().includes("address")) {
+        const match = transcript.toLowerCase().match(/address\sis(.+)/);
+        if (match) setFormData((prev) => ({ ...prev, address: match[1] }));
+      }
+      if (transcript.toLowerCase().includes("phone number")) {
+        const match = transcript.toLowerCase().match(/phone\snumber\sis(.+)/);
+        if (match) {
+          const phoneNumber = match[1].replace(/[^\d-]/g, "");
+          setFormData((prev) => ({ ...prev, phoneNumber }));
+        }
+      }
+    } else {
+      if (transcript.includes("name")) {
+        const match = transcript.match(/name(.+)/);
+        if (match) setFormData((prev) => ({ ...prev, lastName: match[1] }));
+      }
+      if (transcript.includes("名")) {
+        const match = transcript.match(/名前は(.+)/);
+        if (match) setFormData((prev) => ({ ...prev, firstName: match[1] }));
+      }
+      if (transcript.includes("カナ")) {
+        const match = transcript.match(/カナは(.+)/);
+        if (match) {
+          const kana = match[1].replace(/\s+/g, "");
+          setFormData((prev) => ({
+            ...prev,
+            lastNameKana: kana.slice(0, kana.length / 2),
+            firstNameKana: kana.slice(kana.length / 2),
+          }));
+        }
+      }
+      if (transcript.includes("住所")) {
+        const match = transcript.match(/住所は(.+)/);
+        if (match) setFormData((prev) => ({ ...prev, address: match[1] }));
+      }
+      if (transcript.includes("電話番号")) {
+        const match = transcript.match(/電話番号は(.+)/);
+        if (match) {
+          const phoneNumber = match[1].replace(/[^\d-]/g, "");
+          setFormData((prev) => ({ ...prev, phoneNumber }));
+        }
       }
     }
   };
@@ -148,6 +172,13 @@ export function InsuranceFormWithSpeech() {
             <form className="space-y-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold">申込書情報入力</h2>
+                <Checkbox
+                  onClick={() => {
+                    setIsEnglish(!isEnglish);
+                    console.log(isEnglish);
+                  }}
+                ></Checkbox>
+                English
                 <Button
                   type="button"
                   onClick={toggleListening}
