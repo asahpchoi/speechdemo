@@ -88,9 +88,13 @@ export function InsuranceFormWithSpeech() {
   };
 
   const test = () => {
-    const t = prompt("郵便番号は4324243");
-    setTranscript(t);
-    processTranscript(t);
+    const transcript = prompt("郵便番号は4324243");
+    if (transcript !== null) {
+      setTranscript(transcript);
+      processTranscript(transcript);
+    } else {
+      setTranscript(""); // Set to an empty string if prompt is cancelled
+    }
   };
 
   const processTranscript = (transcript: string) => {
@@ -244,7 +248,7 @@ export function InsuranceFormWithSpeech() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>
-                      被保険者名（漢字）
+                      被保o��者名（漢字）
                       <span className="text-orange-500 ml-1">(必須)</span>
                     </Label>
                     <div className="flex gap-2">
