@@ -248,7 +248,7 @@ export function InsuranceFormWithSpeech() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>
-                      被保o��者名（漢字）
+                      被保者名（漢字）
                       <span className="text-orange-500 ml-1">(必須)</span>
                     </Label>
                     <div className="flex gap-2">
