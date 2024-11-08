@@ -152,7 +152,7 @@ export function InsuranceFormWithSpeech() {
         setFormData((prev) => ({
           ...prev,
           postalCode: postalMatch[1].replace(
-            /[.,\/#!$%\^&\*;:{}=\-_`~()]/g,
+            /[.,\/#!$%\^&\*;:{}=\-_`~()。]/g,
             "",
           ),
         }));
@@ -163,7 +163,10 @@ export function InsuranceFormWithSpeech() {
       if (addressMatch) {
         setFormData((prev) => ({
           ...prev,
-          address: addressMatch[1].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""),
+          address: addressMatch[1]
+            .split("、")[0]
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()。、]/g, "")
+            .replaceAll("の", "-"),
         }));
       }
 
@@ -188,8 +191,9 @@ export function InsuranceFormWithSpeech() {
         //const [, era, year, month, day] = birthMatch;
         setFormData((prev) => ({
           ...prev,
-
-          birthDay: birthMatch[1].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""),
+          birthDay: birthMatch[1]
+            .split("。")[0]
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()、]。/g, ""),
         }));
         // You might want to add logic here to convert the Japanese era year to the Gregorian calendar year
       }
