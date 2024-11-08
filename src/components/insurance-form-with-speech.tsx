@@ -112,8 +112,8 @@ export function InsuranceFormWithSpeech() {
         if (fullName.length >= 2) {
           setFormData((prev) => ({
             ...prev,
-            lastName: fullName[0],
-            firstName: fullName.slice(1).join(" "),
+            lastName: nameMatch[1],
+            //firstName: fullName.slice(1).join(" "),
           }));
         }
       }
@@ -137,11 +137,11 @@ export function InsuranceFormWithSpeech() {
       }
 
       // Postal Code
-      const postalMatch = transcript.match(/郵便番号は(\d{3}[-\s]?\d{4})/);
+      const postalMatch = transcript.match(/郵便番号は(.+)/);
       if (postalMatch) {
         setFormData((prev) => ({
           ...prev,
-          postalCode: postalMatch[1].replace(/[-\s]/g, ""),
+          postalCode: postalMatch[1],
         }));
       }
 
