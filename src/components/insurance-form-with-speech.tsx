@@ -108,11 +108,11 @@ export function InsuranceFormWithSpeech() {
     } else {
       const nameMatch = transcript.match(/名前は(.+)/);
       if (nameMatch) {
-        const fullName = nameMatch[1].trim().split(/\s+/);
+        const fullName = nameMatch[1];
         if (fullName.length >= 2) {
           setFormData((prev) => ({
             ...prev,
-            lastName: nameMatch[1],
+            firstName: fullName,
             //firstName: fullName.slice(1).join(" "),
           }));
         }
@@ -141,14 +141,20 @@ export function InsuranceFormWithSpeech() {
       if (postalMatch) {
         setFormData((prev) => ({
           ...prev,
-          postalCode: postalMatch[1],
+          postalCode: postalMatch[1].replace(
+            /[.,\/#!$%\^&\*;:{}=\-_`~()]/g,
+            "",
+          ),
         }));
       }
 
       // Address
       const addressMatch = transcript.match(/住所は(.+)/);
       if (addressMatch) {
-        setFormData((prev) => ({ ...prev, address: addressMatch[1] }));
+        setFormData((prev) => ({
+          ...prev,
+          address: addressMatch[1].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""),
+        }));
       }
 
       // Phone Number
@@ -167,16 +173,13 @@ export function InsuranceFormWithSpeech() {
       }
 
       // Birth Date
-      const birthMatch = transcript.match(
-        /(平成|昭和|令和)(\d+)年(\d+)月(\d+)日/,
-      );
+      const birthMatch = transcript.match(/生年月日は(.+)/);
       if (birthMatch) {
-        const [, era, year, month, day] = birthMatch;
+        //const [, era, year, month, day] = birthMatch;
         setFormData((prev) => ({
           ...prev,
-          birthYear: year.padStart(2, "0"),
-          birthMonth: month.padStart(2, "0"),
-          birthDay: day.padStart(2, "0"),
+
+          birthDay: birthMatch[1],
         }));
         // You might want to add logic here to convert the Japanese era year to the Gregorian calendar year
       }
@@ -240,7 +243,7 @@ export function InsuranceFormWithSpeech() {
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        placeholder="姓"
+                        placeholder="姓名"
                         value={formData.lastName}
                         onChange={(e) =>
                           setFormData((prev) => ({
@@ -250,6 +253,7 @@ export function InsuranceFormWithSpeech() {
                         }
                       />
                       <Input
+                        className="hidden"
                         placeholder="名"
                         value={formData.firstName}
                         onChange={(e) =>
@@ -262,7 +266,7 @@ export function InsuranceFormWithSpeech() {
                       <span className="self-center">様</span>
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 invisible">
                     <Label>
                       被保険者名（全角カナ）
                       <span className="text-orange-500 ml-1">(必須)</span>
@@ -296,9 +300,9 @@ export function InsuranceFormWithSpeech() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>生年月日</Label>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex gap-2">
                       <Select defaultValue="heisei">
-                        <SelectTrigger className="w-24">
+                        <SelectTrigger className="w-24 hidden">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -309,7 +313,7 @@ export function InsuranceFormWithSpeech() {
                       </Select>
                       <Input
                         type="number"
-                        className="w-20"
+                        className="w-20 hidden"
                         value={formData.birthYear}
                         onChange={(e) =>
                           setFormData((prev) => ({
@@ -318,10 +322,10 @@ export function InsuranceFormWithSpeech() {
                           }))
                         }
                       />
-                      <span>年</span>
+
                       <Input
                         type="number"
-                        className="w-20"
+                        className="w-20 hidden"
                         value={formData.birthMonth}
                         onChange={(e) =>
                           setFormData((prev) => ({
@@ -330,10 +334,8 @@ export function InsuranceFormWithSpeech() {
                           }))
                         }
                       />
-                      <span>月</span>
+
                       <Input
-                        type="number"
-                        className="w-20"
                         value={formData.birthDay}
                         onChange={(e) =>
                           setFormData((prev) => ({
@@ -342,7 +344,6 @@ export function InsuranceFormWithSpeech() {
                           }))
                         }
                       />
-                      <span>日</span>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -433,7 +434,7 @@ export function InsuranceFormWithSpeech() {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 hidden">
                   <Label>
                     住所（全角カナ）
                     <span className="text-orange-500 ml-1">(必須)</span>
