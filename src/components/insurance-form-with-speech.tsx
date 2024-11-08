@@ -88,7 +88,7 @@ export function InsuranceFormWithSpeech() {
   };
 
   const test = () => {
-    const t = "郵便番号は4324243";
+    const t = prompt("郵便番号は4324243");
     setTranscript(t);
     processTranscript(t);
   };
