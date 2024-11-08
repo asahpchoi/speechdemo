@@ -179,7 +179,7 @@ export function InsuranceFormWithSpeech() {
         setFormData((prev) => ({
           ...prev,
 
-          birthDay: birthMatch[1],
+          birthDay: birthMatch[1].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""),
         }));
         // You might want to add logic here to convert the Japanese era year to the Gregorian calendar year
       }
