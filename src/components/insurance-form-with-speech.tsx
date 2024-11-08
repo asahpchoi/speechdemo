@@ -87,6 +87,12 @@ export function InsuranceFormWithSpeech() {
     setIsListening(!isListening);
   };
 
+  const test = () => {
+    const t = "郵便番号は4324243";
+    setTranscript(t);
+    processTranscript(t);
+  };
+
   const processTranscript = (transcript: string) => {
     // Simple logic to fill form fields based on speech input
     if (isEnglish) {
@@ -112,7 +118,7 @@ export function InsuranceFormWithSpeech() {
         if (fullName.length >= 2) {
           setFormData((prev) => ({
             ...prev,
-            firstName: fullName,
+            lastName: fullName,
             //firstName: fullName.slice(1).join(" "),
           }));
         }
@@ -490,6 +496,14 @@ export function InsuranceFormWithSpeech() {
           </TabsContent>
         </Tabs>
       </CardContent>
+      <Button
+        className="bg-white-100"
+        onClick={() => {
+          test();
+        }}
+      >
+        Test
+      </Button>
     </Card>
   );
 }
