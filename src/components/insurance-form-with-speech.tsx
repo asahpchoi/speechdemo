@@ -149,12 +149,16 @@ export function InsuranceFormWithSpeech() {
       // Postal Code
       const postalMatch = transcript.match(/郵便番号は(.+)/);
       if (postalMatch) {
-        setFormData((prev) => ({
-          ...prev,
-          postalCode: postalMatch[1]
-            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()。]/g, "")
-            .match(/\d+/)[0],
-        }));
+        const postalCode: any = postalMatch[1].replace(
+          /[.,\/#!$%\^&\*;:{}=\-_`~()。]/g,
+          "",
+        );
+        if (postalCode != null) {
+          setFormData((prev) => ({
+            ...prev,
+            postalCode: postalCode.match(/\d+/)[0],
+          }));
+        }
       }
 
       // Address
