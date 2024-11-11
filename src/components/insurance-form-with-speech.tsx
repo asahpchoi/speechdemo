@@ -151,10 +151,9 @@ export function InsuranceFormWithSpeech() {
       if (postalMatch) {
         setFormData((prev) => ({
           ...prev,
-          postalCode: postalMatch[1].replace(
-            /[.,\/#!$%\^&\*;:{}=\-_`~()。]/g,
-            "",
-          ),
+          postalCode: postalMatch[1]
+            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()。]/g, "")
+            .match(/\d+/)[0],
         }));
       }
 
@@ -252,7 +251,7 @@ export function InsuranceFormWithSpeech() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>
-                      被保者名（漢字）
+                      被保者名
                       <span className="text-orange-500 ml-1">(必須)</span>
                     </Label>
                     <div className="flex gap-2">
